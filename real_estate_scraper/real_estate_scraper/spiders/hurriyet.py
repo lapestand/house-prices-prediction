@@ -47,8 +47,8 @@ class HurriyetSpider(scrapy.Spider):
             
             if "disable" not in next_page:
                 next_page = self.page_template.format(int(response.request.url.split('=')[-1]) + 1)
-                if int(response.request.url.split('=')[-1]) + 1 < int(self.param_stop):
-                    yield scrapy.Request(next_page, callback=self.parse)
+                # if int(response.request.url.split('=')[-1]) + 1 < int(self.param_stop):
+                yield scrapy.Request(next_page, callback=self.parse)
         
 
     def parse_estate(self, response):
