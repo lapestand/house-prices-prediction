@@ -43,12 +43,7 @@ class RealEstateScraperItem(scrapy.Item):
     il = scrapy.Field()
     ilce = scrapy.Field()
     mahalle = scrapy.Field()
-
-
-    # IC OZELLIKLER
-
-
-    adsl = scrapy.Field()
+    adsl = scrapy.Field()# IC OZELLIKLER
     ahsap_dograma = scrapy.Field()
     alarm = scrapy.Field()
     ankastre_mutfak = scrapy.Field()
@@ -91,11 +86,7 @@ class RealEstateScraperItem(scrapy.Item):
     vestiyer = scrapy.Field()
     yerden_isitma = scrapy.Field()
     parke___lamine = scrapy.Field()
-    
-    # DIS OZELLIKLER
-
-
-    asansor = scrapy.Field()
+    asansor = scrapy.Field()# DIS OZELLIKLER
     bahceli = scrapy.Field()
     cam_mozaik_kaplama = scrapy.Field()
     fitness = scrapy.Field()
@@ -115,10 +106,7 @@ class RealEstateScraperItem(scrapy.Item):
     yangin_merdiveni = scrapy.Field()
     yuzme_havuzu = scrapy.Field()
     ahsap_dograma = scrapy.Field()
-    
-    # KONUM
-
-    arka_cephe = scrapy.Field()
+    arka_cephe = scrapy.Field()# KONUM
     caddeye_yakin = scrapy.Field()
     denize_sifir = scrapy.Field()
     denize_yakin = scrapy.Field()
