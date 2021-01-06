@@ -1,7 +1,8 @@
 import os
 import pandas as pd
+import numpy as np
 
-
+"""
 all_data = list()
 
 for file_name in os.listdir("real_estate_scraper"):
@@ -118,10 +119,75 @@ houses["tem_e_yakin"].fillna("False", inplace=True)
 houses["minibus___dolmusa_yakin"].fillna("False", inplace=True)
 houses["avrasya_tuneli_ne_yakin"].fillna("False", inplace=True)
 houses["bogaz_koprulerine_yakin"].fillna("False", inplace=True)
-
 print(houses)
 
 houses.to_csv("dataset.csv", index=False)
 
 # print(houses.dtypes)
 
+"""
+
+f = lambda x: x["fiyat"].replace("tl", '').split()[0]
+
+def s(x):
+    if x["site_icerisinde"] != "True" and x["site_icerisinde"] != "False":
+        return "True"
+
+def bk(x):
+    try:
+        int(x["bulundugu_kat"])
+        return x["bulundugu_kat"]
+    except ValueError:
+        if x["bulundugu_kat"] == "yüksek giris" or x["bulundugu_kat"] == "giris kati" or x["bulundugu_kat"] == "zemin" or x["bulundugu_kat"] == "teras kati":
+            return "0"
+        elif x["bulundugu_kat"] == "en ust kat" or x["bulundugu_kat"] == "cati kati":
+            return x["kat_sayisi"]
+        """
+        elif x["bulundugu_kat"].startswith("kat"):
+            return x["bulundugu_kat"][-1]
+        elif x["bulundugu_kat"].startswith("ara kat") == "ara kat":
+            return "2"
+        else:
+            return "0"
+        """
+
+def ks(x):
+    if x["kat_sayisi"] == "":
+        return "1"
+    else:
+        return x["kat_sayisi"].split()[0]
+
+def ed(x):
+    if x["esya_durumu"] == "esyali":
+        return "True"
+    else:
+        return "False"
+
+print("dataset loading")
+df = pd.read_csv("dataset.csv")
+
+print("fiyat")
+df["fiyat"] = df.apply(f, axis=1)
+print("aidat")
+df["aidat"] = df.apply(f, axis=1)
+print("kira_getirisi")
+df["kira_getirisi"] = df.apply(f, axis=1)
+
+print("bina_yasi")
+df.loc[df["bina_yasi"] == "sifir_bina"] = "0"
+
+print("site_icerisinde")
+df["site_icerisinde"] = df.apply(s, axis=1)
+
+print("kat_sayisi")
+df["kat_sayisi"].fillna("0", inplace=True)
+# df["kat_sayisi"] = df.apply(ks, axis=1)
+
+print("bulundugu_kat")
+df["bulundugu_kat"] = df.apply(bk, axis=1)
+
+print("esya_durumu")
+df["esya_durumu"] = df.apply(ed, axis=1)
+
+print("exporting")
+df.to_csv("dataset2.csv")
