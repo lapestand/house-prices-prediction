@@ -163,6 +163,10 @@ def ed(x):
     else:
         return "False"
 
+def by(x):
+    if x["bina_yasi"] == "sifir_bina":
+        return "0"
+
 print("dataset loading")
 df = pd.read_csv("dataset.csv")
 
@@ -174,20 +178,27 @@ print("kira_getirisi")
 df["kira_getirisi"] = df.apply(f, axis=1)
 
 print("bina_yasi")
-df.loc[df["bina_yasi"] == "sifir_bina"] = "0"
+df["bina_yasi"] == df.apply(by, axis=1)
 
 print("site_icerisinde")
 df["site_icerisinde"] = df.apply(s, axis=1)
 
 print("kat_sayisi")
-df["kat_sayisi"].fillna("0", inplace=True)
+df["kat_sayisi"].fillna("1", inplace=True)
 # df["kat_sayisi"] = df.apply(ks, axis=1)
 
 print("bulundugu_kat")
 df["bulundugu_kat"] = df.apply(bk, axis=1)
+df["kat_sayisi"].fillna("1", inplace=True)
 
 print("esya_durumu")
 df["esya_durumu"] = df.apply(ed, axis=1)
 
+print("kullanım_durumu")
+df["kullanim_durumu"].fillna("bos", inplace=True)
+
+print("site_icerisinde")
+df["site_icerisinde"].fillna("False", inplace=True)
+
 print("exporting")
-df.to_csv("dataset2.csv")
+df.to_csv("dataset2.csv", index=False)
