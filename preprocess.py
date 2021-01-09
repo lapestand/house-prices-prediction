@@ -125,8 +125,6 @@ houses.to_csv("dataset.csv", index=False)
 
 # print(houses.dtypes)
 
-"""
-
 f = lambda x: x["fiyat"].replace("tl", '').split()[0]
 
 def s(x):
@@ -142,14 +140,13 @@ def bk(x):
             return "0"
         elif x["bulundugu_kat"] == "en ust kat" or x["bulundugu_kat"] == "cati kati":
             return x["kat_sayisi"]
-        """
-        elif x["bulundugu_kat"].startswith("kat"):
-            return x["bulundugu_kat"][-1]
-        elif x["bulundugu_kat"].startswith("ara kat") == "ara kat":
-            return "2"
-        else:
-            return "0"
-        """
+        
+        #elif x["bulundugu_kat"].startswith("kat"):
+        #   return x["bulundugu_kat"][-1]
+        #elif x["bulundugu_kat"].startswith("ara kat") == "ara kat":
+        #    return "2"
+        #else:
+        #    return "0"
 
 def ks(x):
     if x["kat_sayisi"] == "":
@@ -202,3 +199,126 @@ df["site_icerisinde"].fillna("False", inplace=True)
 
 print("exporting")
 df.to_csv("dataset2.csv", index=False)
+"""
+
+"""
+f = lambda x: x["fiyat"].split()[0].replace(',', '')
+
+df = pd.read_csv("dataset2.csv")
+print("Dataset loaded")
+
+def bk(x):
+    try:
+        int(x["bulundugu_kat"])
+        return x["bulundugu_kat"]
+    except ValueError:
+        if "katli" in x["bulundugu_kat"]:
+            return x["bulundugu_kat"].split()[0]
+        elif x["bulundugu_kat"] == "nan":
+            return "1"
+        else:
+            return x["bulundugu_kat"]
+
+def by(x):
+    if x["bina_yasi"] == "sifir bina":
+        return "0"
+    else:
+        return x["bina_yasi"]
+
+def ks(x):
+    return x["kat_sayisi"].split()[0]
+
+def ku(x):
+    if x["krediye_uygunluk"] == "False":
+        return "bilinmiyor"
+    return x["krediye_uygunluk"]
+
+def t(x):
+    if x["takas"] == "evet":
+        return "True"
+    else:
+        return "False"
+
+def td(x):
+    if x["tapu_durumu"] == "False":
+        return "bilinmiyor"
+    else:
+        return x["tapu_durumu"]
+
+df["bulundugu_kat"] = df["bulundugu_kat"].astype(str)
+df["bulundugu_kat"] = df.apply(bk, axis=1)
+print("bulundugu_kat")
+
+df["bina_yasi"] = df.apply(by, axis=1)
+print("bina_yasi")
+
+df["banyo_sayisi"].fillna("1", inplace=True)
+print("banyo_sayisi")
+
+df["depozito"] = df.apply(f, axis=1)
+df["depozito"] = df["depozito"].astype(int)
+print("depozito")
+
+
+df["isinma_tipi"].fillna("isitma yok", inplace=True)
+print("isinma_tipi")
+
+df["yakit_tipi"].fillna("bilinmiyor", inplace=True)
+df["yapi_tipi"].fillna("bilinmiyor", inplace=True)
+df["yapinin_durumu"].fillna("bilinmiyor", inplace=True)
+
+
+df["kat_sayisi"] = df.apply(ks, axis=1)
+print("kat_sayisi")
+
+df["takas"] = df.apply(t, axis=1)
+
+df["tapu_durumu"] = df.apply(td, axis=1)
+
+df["krediye_uygunluk"] = df.apply(ku, axis=1)
+
+df["banyo_sayisi"] = df["banyo_sayisi"].astype(int)
+
+df["aidat"] = df.apply(f, axis=1)
+df["aidat"] = df["aidat"].astype(int)
+print("aidat")
+
+df["bina_yasi"] = df["bina_yasi"].astype(int)
+
+df["brut_m2"] = df.apply(f, axis=1)
+df["brut_m2"] = df["brut_m2"].astype(int)
+
+df["bulundugu_kat"].fillna("1", inplace=True)
+df["bulundugu_kat"] = df["bulundugu_kat"].astype(int)
+
+df["fiyat"] = df.apply(f, axis=1)
+df["fiyat"] = df["fiyat"].astype(int)
+
+df["kat_sayisi"] = df["kat_sayisi"].astype(int)
+
+#df["kira_getirisi"] = df.apply(f, axis=1)
+#df["kira_getirisi"] = df["kira_getirisi"].astype(int)
+
+
+
+
+for col in df.columns:
+    print(df[col])
+    print(df[col].unique(), end='\t')
+    print(len(df[col].unique()))
+    input()
+
+df.to_csv("dataset3.csv", index=False)
+
+"""
+
+df = pd.read_csv("dataset3.csv")
+
+df
+
+for col in df.columns:
+    print(df[col])
+    print(df[col].unique(), end='\t')
+    print(len(df[col].unique()))
+    input()
+
