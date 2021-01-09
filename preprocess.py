@@ -1,4 +1,5 @@
 import os
+import re
 import pandas as pd
 import numpy as np
 
@@ -312,13 +313,63 @@ df.to_csv("dataset3.csv", index=False)
 
 """
 
+def kuzey(x,):
+    if pd.isnull(x["cephe"]):
+        return False
+    return "kuzey" in x["cephe"]
+    
+
+def guney(x,):
+    if pd.isnull(x["cephe"]):
+        return False
+    return "guney" in x["cephe"]
+
+
+def dogu(x,):
+    if pd.isnull(x["cephe"]):
+        return False
+    return "dogu" in x["cephe"]
+
+def bati(x,):
+    if pd.isnull(x["cephe"]):
+        return False
+    return "bati" in x["cephe"]
+
 df = pd.read_csv("dataset3.csv")
+print("Dataset loaded")
 
-df
+df["kuzey_cephe"]   = df.apply(kuzey, axis=1)
+print("Kuzey applied")
 
+df["guney_cephe"]   = df.apply(guney, axis=1)
+print("Guney applied")
+
+df["dogu_cephe"]    = df.apply(dogu, axis=1)
+print("Dogu applied")
+
+df["bati_cephe"]    = df.apply(bati, axis=1)
+print("Batı applied")
+
+
+df.drop("cephe", axis=1, inplace=True)
+print("Old cephe column deleted")
+
+df.set_axis([re.sub('_+', '_', col) for col in df.columns], axis=1, inplace=True)
+
+for col in df.columns:
+    print(col)
+
+re_arranged_cols = df.columns.tolist()
+re_arranged_cols.remove("fiyat")
+re_arranged_cols.append("fiyat")
+df = df[re_arranged_cols]
+
+print(df.columns)
+
+"""
 for col in df.columns:
     print(df[col])
     print(df[col].unique(), end='\t')
     print(len(df[col].unique()))
     input()
-
+"""
