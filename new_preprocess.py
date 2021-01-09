@@ -3,7 +3,6 @@ import re
 import pandas as pd
 import numpy as np
 
-"""
 all_data = list()
 
 for file_name in os.listdir("real_estate_scraper"):
@@ -15,19 +14,17 @@ for file_name in os.listdir("real_estate_scraper"):
 houses = pd.concat(all_data)
 houses = houses.drop_duplicates()
 
-print("Filling started")
-# houses = pd.read_csv("dataset.csv")
+print("Datasets concatted")
+
 
 houses["fiyat"].fillna("0", inplace=True)
-houses["bina_yasi"].fillna("0", inplace=True)
+houses["depozito"].fillna("0", inplace=True)
+houses["kira_getirisi"].fillna("0", inplace=True)
 houses["krediye_uygunluk"].fillna("False", inplace=True)
 houses["esya_durumu"].fillna("Yok", inplace=True)
-houses["aidat"].fillna("0", inplace=True)
 houses["takas"].fillna("Yok", inplace=True)
 houses["site_icerisinde"].fillna("False", inplace=True)
 houses["tapu_durumu"].fillna("False", inplace=True)
-houses["kira_getirisi"].fillna("0", inplace=True)
-houses["depozito"].fillna("0", inplace=True)
 houses["il"].fillna("", inplace=True)
 houses["ilce"].fillna("", inplace=True)
 houses["mahalle"].fillna("", inplace=True)
@@ -89,6 +86,7 @@ houses["oyun_parki"].fillna("False", inplace=True)
 houses["pvc_dograma"].fillna("False", inplace=True)
 houses["siding"].fillna("False", inplace=True)
 houses["site_icerisinde"].fillna("False", inplace=True)
+houses["kullanim_durumu"].fillna("bos", inplace=True)
 houses["su_deposu"].fillna("False", inplace=True)
 houses["tenis_kortu"].fillna("False", inplace=True)
 houses["yangin_merdiveni"].fillna("False", inplace=True)
@@ -121,10 +119,41 @@ houses["minibus___dolmusa_yakin"].fillna("False", inplace=True)
 houses["avrasya_tuneli_ne_yakin"].fillna("False", inplace=True)
 houses["bogaz_koprulerine_yakin"].fillna("False", inplace=True)
 
+houses["bulundugu_kat"].fillna("1", inplace=True)
+houses["kat_sayisi"].fillna("1", inplace=True)
 
-houses.to_csv("dataset.csv", index=False)
+def aidat_p(x):
+    if pd.isnull(x["aidat"]):
+        return x["aidat"]
+    return x["aidat"].replace("tl", '').split()[0]
 
-# print(houses.dtypes)
+houses["aidat"] = houses.apply(aidat_p, axis=1)
+houses["aidat"] = houses["aidat"].astype(float)
+houses["aidat"].fillna(value=houses['aidat'].mean(), inplace=True)
+
+
+
+def by(x):
+    if pd.isnull(x["bina_yasi"]) or x["bina_yasi"] != "sifir_bina":
+        return x["bina_yasi"]
+    return '0'
+
+houses["bina_yasi"] = houses.apply(by, axis=1)
+houses["bina_yasi"] = houses["bina_yasi"].astype(float)
+houses["bina_yasi"].fillna(value=houses['bina_yasi'].mean(), inplace=True)
+
+
+
+
+
+
+
+for col in houses.columns:
+    print(houses[col])
+    print(houses[col].unique(), end='\t')
+    print(len(houses[col].unique()))
+    input()
+"""
 
 f = lambda x: x["fiyat"].replace("tl", '').split()[0]
 
@@ -171,216 +200,17 @@ df = pd.read_csv("dataset.csv")
 print("fiyat")
 df["fiyat"] = df.apply(f, axis=1)
 print("aidat")
-df["aidat"] = df.apply(f, axis=1)
 print("kira_getirisi")
 df["kira_getirisi"] = df.apply(f, axis=1)
 
-print("bina_yasi")
 df["bina_yasi"] == df.apply(by, axis=1)
 
 print("site_icerisinde")
 df["site_icerisinde"] = df.apply(s, axis=1)
 
 print("kat_sayisi")
-df["kat_sayisi"].fillna("1", inplace=True)
 # df["kat_sayisi"] = df.apply(ks, axis=1)
 
-print("bulundugu_kat")
-df["bulundugu_kat"] = df.apply(bk, axis=1)
-df["kat_sayisi"].fillna("1", inplace=True)
-
-print("esya_durumu")
 df["esya_durumu"] = df.apply(ed, axis=1)
 
-print("kullanım_durumu")
-df["kullanim_durumu"].fillna("bos", inplace=True)
-
-print("site_icerisinde")
-df["site_icerisinde"].fillna("False", inplace=True)
-
-print("exporting")
-df.to_csv("dataset2.csv", index=False)
 """
-
-"""
-f = lambda x: x["fiyat"].split()[0].replace(',', '')
-
-df = pd.read_csv("dataset2.csv")
-print("Dataset loaded")
-
-def bk(x):
-    try:
-        int(x["bulundugu_kat"])
-        return x["bulundugu_kat"]
-    except ValueError:
-        if "katli" in x["bulundugu_kat"]:
-            return x["bulundugu_kat"].split()[0]
-        elif x["bulundugu_kat"] == "nan":
-            return "1"
-        else:
-            return x["bulundugu_kat"]
-
-def by(x):
-    if x["bina_yasi"] == "sifir bina":
-        return "0"
-    else:
-        return x["bina_yasi"]
-
-def ks(x):
-    return x["kat_sayisi"].split()[0]
-
-def ku(x):
-    if x["krediye_uygunluk"] == "False":
-        return "bilinmiyor"
-    return x["krediye_uygunluk"]
-
-def t(x):
-    if x["takas"] == "evet":
-        return "True"
-    else:
-        return "False"
-
-def td(x):
-    if x["tapu_durumu"] == "False":
-        return "bilinmiyor"
-    else:
-        return x["tapu_durumu"]
-
-df["bulundugu_kat"] = df["bulundugu_kat"].astype(str)
-df["bulundugu_kat"] = df.apply(bk, axis=1)
-print("bulundugu_kat")
-
-df["bina_yasi"] = df.apply(by, axis=1)
-print("bina_yasi")
-
-df["banyo_sayisi"].fillna("1", inplace=True)
-print("banyo_sayisi")
-
-df["depozito"] = df.apply(f, axis=1)
-df["depozito"] = df["depozito"].astype(int)
-print("depozito")
-
-
-df["isinma_tipi"].fillna("isitma yok", inplace=True)
-print("isinma_tipi")
-
-df["yakit_tipi"].fillna("bilinmiyor", inplace=True)
-df["yapi_tipi"].fillna("bilinmiyor", inplace=True)
-df["yapinin_durumu"].fillna("bilinmiyor", inplace=True)
-
-
-df["kat_sayisi"] = df.apply(ks, axis=1)
-print("kat_sayisi")
-
-df["takas"] = df.apply(t, axis=1)
-
-df["tapu_durumu"] = df.apply(td, axis=1)
-
-df["krediye_uygunluk"] = df.apply(ku, axis=1)
-
-df["banyo_sayisi"] = df["banyo_sayisi"].astype(int)
-
-df["aidat"] = df.apply(f, axis=1)
-df["aidat"] = df["aidat"].astype(int)
-print("aidat")
-
-df["bina_yasi"] = df["bina_yasi"].astype(int)
-
-df["brut_m2"] = df.apply(f, axis=1)
-df["brut_m2"] = df["brut_m2"].astype(int)
-
-df["bulundugu_kat"].fillna("1", inplace=True)
-df["bulundugu_kat"] = df["bulundugu_kat"].astype(int)
-
-df["fiyat"] = df.apply(f, axis=1)
-df["fiyat"] = df["fiyat"].astype(int)
-
-df["kat_sayisi"] = df["kat_sayisi"].astype(int)
-
-#df["kira_getirisi"] = df.apply(f, axis=1)
-#df["kira_getirisi"] = df["kira_getirisi"].astype(int)
-
-
-
-
-for col in df.columns:
-    print(df[col])
-    print(df[col].unique(), end='\t')
-    print(len(df[col].unique()))
-    input()
-
-df.to_csv("dataset3.csv", index=False)
-
-"""
-"""
-def kuzey(x,):
-    if pd.isnull(x["cephe"]):
-        return False
-    return "kuzey" in x["cephe"]
-    
-
-def guney(x,):
-    if pd.isnull(x["cephe"]):
-        return False
-    return "guney" in x["cephe"]
-
-
-def dogu(x,):
-    if pd.isnull(x["cephe"]):
-        return False
-    return "dogu" in x["cephe"]
-
-def bati(x,):
-    if pd.isnull(x["cephe"]):
-        return False
-    return "bati" in x["cephe"]
-
-df = pd.read_csv("dataset3.csv")
-print("Dataset loaded")
-
-df["kuzey_cephe"]   = df.apply(kuzey, axis=1)
-print("Kuzey applied")
-
-df["guney_cephe"]   = df.apply(guney, axis=1)
-print("Guney applied")
-
-df["dogu_cephe"]    = df.apply(dogu, axis=1)
-print("Dogu applied")
-
-df["bati_cephe"]    = df.apply(bati, axis=1)
-print("Batı applied")
-
-
-df.drop("cephe", axis=1, inplace=True)
-print("Old cephe column deleted")
-
-df.set_axis([re.sub('_+', '_', col) for col in df.columns], axis=1, inplace=True)
-
-for col in df.columns:
-    print(col)
-
-re_arranged_cols = df.columns.tolist()
-re_arranged_cols.remove("fiyat")
-re_arranged_cols.append("fiyat")
-df = df[re_arranged_cols]
-
-print(df.columns)
-
-df.to_csv("dataset4.csv", index=False)
-
-for col in df.columns:
-    print(df[col])
-    print(df[col].unique(), end='\t')
-    print(len(df[col].unique()))
-    input()
-"""
-
-df = pd.read_csv("dataset4.csv")
-print(len(df))
-cols = pd.read_csv("dataset3.csv").columns.tolist()
-df2 = pd.read_csv("dataset.csv", names=cols, dtype='unicode')
-print(len(df2))
-print(df2[["aidat"]])
-#df2["aidat"].fillna("0", inplace=True)
-
-#df[["aidat"]] = df2[["aidat"]]
