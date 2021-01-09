@@ -366,6 +366,8 @@ df = df[re_arranged_cols]
 
 print(df.columns)
 
+df.to_csv("dataset4.csv", index=False)
+
 """
 for col in df.columns:
     print(df[col])
