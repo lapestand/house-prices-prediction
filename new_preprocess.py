@@ -3,7 +3,7 @@ import re
 import pandas as pd
 import numpy as np
 import random
-
+"""
 if True:
     all_data = list()
 
@@ -141,15 +141,15 @@ if True:
         if pd.isnull(val):
             return val
         if "gbp" in val:
-            return str(int(val.replace("gbp", '').split()[0].replace(',', '')) * 10)
+            return int(val.replace("gbp", '').split()[0].replace(',', '')) * 10
         if "usd" in val:
-            return str(int(val.replace("usd", '').split()[0].replace(',', '')) * 7.5)
-        return val.replace("tl", '').split()[0].replace(',', '')
+            return int(val.replace("usd", '').split()[0].replace(',', '')) * 7.5
+        return int(val.replace("tl", '').split()[0].replace(',', ''))
 
     houses["aidat"] = houses.apply(aidat_p, axis=1)
     houses["aidat"] = houses["aidat"].astype(float)
     houses["aidat"].fillna(value=int(houses[houses["aidat"] < 10000]["aidat"].mean()), inplace=True)
-    # houses["aidat"] = houses["aidat"].astype(int)
+    houses["aidat"] = houses["aidat"].astype(int)
 
     aidat_mean = houses[houses["aidat"] < 10000]["aidat"].mean()
     houses.loc[houses["aidat"] > 10000, "aidat"] = aidat_mean
@@ -162,12 +162,12 @@ if True:
             return x["bina_yasi"]
 
         if x["bina_yasi"] == "sifir bina":
-            return "0"
+            return 0
 
         return x["bina_yasi"].replace(',', '')
 
     houses["bina_yasi"] = houses.apply(by, axis=1)
-    houses["bina_yasi"] = houses["bina_yasi"].astype(float).astype(int)
+    houses["bina_yasi"] = houses["bina_yasi"].astype(float)
     houses["bina_yasi"].fillna(value=int(houses['bina_yasi'].mean()), inplace=True)
     houses["bina_yasi"] = houses["bina_yasi"].astype(int)
 
@@ -181,7 +181,7 @@ if True:
 
     def bm(x):
         if isinstance(x["brut_m2"], str):
-            return x["brut_m2"].replace(',', '')
+            return int(x["brut_m2"].replace(',', ''))
         return x["brut_m2"]
 
     houses["brut_m2"] = houses.apply(bm, axis=1)
@@ -290,49 +290,51 @@ if True:
 
     houses["dogu_cephe"]    = houses.apply(dogu, axis=1)
     houses["dogu_cephe"]    = houses["dogu_cephe"].astype(int)
+
     print("Dogu applied")
 
     houses["bati_cephe"]    = houses.apply(bati, axis=1)
     houses["bati_cephe"]    = houses["bati_cephe"].astype(int)
+
     print("Batı applied")
 
 
     houses.drop("cephe", axis=1, inplace=True)
     print("Old cephe column deleted")
 
+"""
+# houses.to_csv("save_point.csv", index=False)
 
-    houses.to_csv("save_point.csv", index=False)
-
+houses = pd.read_csv("save_point.csv")
+if True:   
     def fiyat_p(x):
         if pd.isnull(x["fiyat"]):
             return x["fiyat"]
-        return x["fiyat"].split()[0].replace(',', '')
+        return int(x["fiyat"].split()[0].replace(',', ''))
 
     houses["fiyat"] = houses.apply(fiyat_p, axis=1)
-    houses["fiyat"] = houses["fiyat"].astype(float)
-    houses["fiyat"].fillna(value=houses['fiyat'].mean(), inplace=True)
-    
+    print(houses[houses["fiyat"] < 0])
+
+    houses["fiyat"].fillna(value=int(houses['fiyat'].mean()), inplace=True)
 
     print(houses[houses["fiyat"] < 0])
 
     print("fiyat -- DONE")
-
 
     def kira_p(x):
         val = x["kira_getirisi"]
         if pd.isnull(val):
             return val
         if "gbp" in val:
-            return str(int(val.replace("gbp", '').split()[0].replace(',', '')) * 10)
+            return int(val.replace("gbp", '').split()[0].replace(',', '')) * 10
         if "usd" in val:
-            return str(int(val.replace("usd", '').split()[0].replace(',', '')) * 7.5)
+            return int(val.replace("usd", '').split()[0].replace(',', '')) * 7.5
         if "eur" in val:
-            return str(int(val.replace("eur", '').split()[0].replace(',', '')) * 9)
-        return val.replace("tl", '').split()[0].replace(',', '')
+            return int(val.replace("eur", '').split()[0].replace(',', '')) * 9
+        return int(val.replace("tl", '').split()[0].replace(',', ''))
 
     houses["kira_getirisi"] = houses.apply(kira_p, axis=1)
-    houses["kira_getirisi"] = houses["kira_getirisi"].astype(float)
-    houses["kira_getirisi"].fillna(value=houses['kira_getirisi'].mean(), inplace=True)
+    houses["kira_getirisi"].fillna(value=int(houses['kira_getirisi'].mean()), inplace=True)
 
     print("kira_getirisi -- DONE")
 
@@ -341,13 +343,13 @@ if True:
         if pd.isnull(x["depozito"]):
             return x["depozito"]
         if "usd" in x["depozito"]:
-            return str(int(x["depozito"].replace("usd", '').split()[0].replace(',', '')) * 7.5)
-        return x["depozito"].replace("tl", '').split()[0].replace(',', '')
+            return int(x["depozito"].replace("usd", '').split()[0].replace(',', '')) * 7.5
+        return int(x["depozito"].replace("tl", '').split()[0].replace(',', ''))
 
 
     houses["depozito"] = houses.apply(depozito_p, axis=1)
-    houses["depozito"] = houses["depozito"].astype(float)
-    houses["depozito"].fillna(value=houses['depozito'].mean(), inplace=True)
+    houses["depozito"].fillna(value=int(houses['depozito'].mean()), inplace=True)
+
 
     print("depozito  -- DONE")
 
@@ -468,7 +470,7 @@ if True:
 
     sehirler.sort_values(by=["nufus"], inplace=True, ignore_index=True)
 
-    evler = pd.read_csv("house_prices2.csv")
+    # evler = pd.read_csv("house_prices2.csv")
 
     def n2i(x):
         if x["il"] == "mersin(icel)":
@@ -477,7 +479,7 @@ if True:
             return 81
         return sehirler.index[sehirler["sehir"] == x["il"]][0]
 
-    evler["il"] = evler.apply(n2i, axis=1)
+    houses["il"] = houses.apply(n2i, axis=1)
 
-    evler.to_csv("house_prices3.csv", index=False)
+    houses.to_csv("house_prices5.csv", index=False)
 
