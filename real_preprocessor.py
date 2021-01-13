@@ -355,13 +355,14 @@ class Preprocessor:
             return sehirler.index[sehirler["sehir"] == x["il"]][0]
 
         self.houses["il"] = self.houses.apply(n2i, axis=1)
-        # self.houses.to_csv("house_prices.csv", index=False)
+        print(len(self.houses.columns))
+        self.houses.to_csv("house_prices.csv", index=False)
         # print(self.houses[[col for col in self.houses if col in self.bool_attributes]])
 
-        for col in self.houses.columns:
-            print(col)
-            print(self.houses[col])
-            input()
+        # for col in self.houses.columns:
+        #    print(col)
+        #    print(self.houses[col])
+        #    input()
 
     def nominal2numeric(self):
         self.houses.loc[self.houses["esya_durumu"] == "esyali", "esya_durumu"] = 1
